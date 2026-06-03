@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Облака — социальная сеть</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sky: #5eb0f5;
+      --sky-dark: #3a8fd4;
+      --cloud: rgba(255,255,255,0.88);
+      --cloud-border: rgba(255,255,255,0.6);
+      --ink: #1a1a2e;
+      --night: #0d0d1a;
+      --moon: #ffffff;
+      --green: #7fff00;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Futura', 'Century Gothic', 'Nunito', sans-serif;
+      background: var(--sky);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .nav-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .nav-actions { display: flex; gap: 10px; align-items: center; }
+
+    .nav-btn {
+      background: rgba(255,255,255,0.9);
+      border: none;
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--ink);
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+    .nav-btn:hover { background: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .nav-btn.dark { background: var(--night); color: white; }
+    .nav-btn.dark:hover { background: #222240; }
+
+    .nav-user {
+      display: flex; align-items: center; gap: 8px;
+      color: white; font-weight: 700; font-size: 0.9rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .nav-user:hover { text-decoration: underline; }
+
+    .page { display: none; padding-top: 70px; min-height: 100vh; }
+    .page.active { display: block; }
+
+    #feed-page { padding: 80px 20px 40px; }
+
+    .clouds-container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      min-height: 400px;
+    }
+
+    .cloud-post {
+      position: relative;
+      margin: 30px auto;
+      max-width: 420px;
+      animation: floatIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .cloud-post:nth-child(odd) { margin-left: 5%; }
+    .cloud-post:nth-child(even) { margin-left: 25%; }
+    .cloud-post:nth-child(3n) { margin-left: 15%; }
+
+    .cloud-shape {
+      background: var(--cloud);
+      border-radius: 50px;
+      padding: 22px 28px;
+      position: relative;
+      box-shadow:
+        0 8px 32px rgba(0,0,0,0.08),
+        inset 0 2px 0 rgba(255,255,255,0.9),
+        0 0 0 2px rgba(255,255,255,0.5);
+    }
+
+    .cloud-shape::before,
+    .cloud-shape::after {
+      content: '';
+      position: absolute;
+      background: var(--cloud);
+      border-radius: 50%;
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.9);
+    }
+    .cloud-shape::before { width: 70px; height: 70px; top: -25px; left: 30px; }
+    .cloud-shape::after { width: 50px; height: 50px; top: -15px; left: 80px; }
+
+    .cloud-extra-bump {
+      position: absolute;
+      width: 45px; height: 45px;
+      background: var(--cloud);
+      border-radius: 50%;
+      top: -12px; left: 120px;
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.9);
+    }
+
+    .cloud-author {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--sky-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .cloud-author:hover { text-decoration: underline; }
+
+    .cloud-text {
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .cloud-post-pair { display: flex; align-items: flex-end; }
+
+    .cloud-photo {
+      width: 90px;
+      flex-shrink: 0;
+      margin-left: 10px;
+      position: relative;
+    }
+    .cloud-photo-shape {
+      background: var(--cloud);
+      border-radius: 40px;
+      padding: 8px;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .cloud-photo-shape::before {
+      content: '';
+      position: absolute;
+      width: 35px; height: 35px;
+      background: var(--cloud);
+      border-radius: 50%;
+      top: -12px; left: 15px;
+    }
+    .cloud-photo-img {
+      width: 100%;
+      border-radius: 30px;
+      display: block;
+      object-fit: cover;
+      height: 70px;
+    }
+    .photo-circle {
+      width: 36px; height: 36px;
+      background: var(--green);
+      border-radius: 50%;
+      position: absolute;
+      top: -8px; right: -8px;
+      border: 2px solid var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+
+    .cloud-reactions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .reaction-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 4px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--ink);
+      opacity: 0.6;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 20px;
+    }
+    .reaction-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
+    .reaction-btn.active-like { opacity: 1; color: #e74c3c; }
+    .reaction-btn.active-dislike { opacity: 1; color: #3498db; }
+    .reaction-icon { font-size: 1rem; }
+
+    .cloud-time {
+      margin-left: auto;
+      font-size: 0.68rem;
+      color: rgba(26,26,46,0.4);
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(26,26,46,0.3);
+      font-size: 1rem;
+      transition: color 0.2s;
+      padding: 4px;
+    }
+    .delete-btn:hover { color: #e74c3c; }
+
+    .add-post-btn {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: var(--night);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 28px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+      transition: all 0.2s;
+      z-index: 50;
+    }
+    .add-post-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-cloud {
+      background: white;
+      border-radius: 30px;
+      padding: 36px;
+      max-width: 480px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 20px;
+      background: none; border: none;
+      font-size: 1.4rem; cursor: pointer;
+      color: rgba(0,0,0,0.3);
+    }
+    .modal-close:hover { color: var(--ink); }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(0,0,0,0.5);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--ink);
+      background: #f8f8fc;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--sky);
+      background: white;
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+
+    .word-count {
+      text-align: right;
+      font-size: 0.72rem;
+      color: rgba(0,0,0,0.4);
+      margin-top: 4px;
+    }
+    .word-count.over { color: #e74c3c; font-weight: 700; }
+
+    .form-btn {
+      width: 100%;
+      background: var(--night);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    .form-btn:hover { background: #222240; transform: translateY(-1px); }
+    .form-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-top: 8px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .img-preview {
+      margin-top: 10px;
+      border-radius: 16px;
+      max-height: 120px;
+      max-width: 100%;
+      display: none;
+      object-fit: cover;
+    }
+
+    .modal-tabs {
+      display: flex;
+      margin-bottom: 24px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(0,0,0,0.08);
+    }
+    .modal-tab {
+      flex: 1; padding: 10px; text-align: center;
+      font-family: inherit; font-size: 0.82rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      cursor: pointer; border: none; background: transparent;
+      color: rgba(0,0,0,0.4); transition: all 0.2s;
+    }
+    .modal-tab.active { background: var(--night); color: white; }
+
+    #profile-page {
+      background: var(--night);
+      min-height: 100vh;
+      padding: 80px 20px 40px;
+    }
+
+    .profile-header {
+      max-width: 500px;
+      margin: 0 auto 40px;
+      text-align: center;
+    }
+
+    .profile-moon {
+      width: 100px; height: 100px;
+      background: white;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 0 40px rgba(255,255,255,0.3);
+    }
+    .profile-moon img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-moon-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: rgba(0,0,0,0.2);
+    }
+
+    .profile-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .profile-about {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .profile-edit-btn {
+      margin-top: 16px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .profile-edit-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .profile-posts { max-width: 500px; margin: 0 auto; }
+
+    .profile-cloud {
+      background: rgba(255,255,255,0.08);
+      border-radius: 30px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .profile-cloud-text { color: rgba(255,255,255,0.85); font-size: 0.9rem; line-height: 1.5; }
+    .profile-cloud-time { color: rgba(255,255,255,0.3); font-size: 0.7rem; margin-top: 8px; }
+
+    .rain-container {
+      position: fixed;
+      pointer-events: none;
+      z-index: 998;
+      display: none;
+    }
+    .raindrop {
+      position: absolute;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, rgba(100,150,255,0.8));
+      border-radius: 2px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-20px); opacity: 1; }
+      100% { transform: translateY(100px); opacity: 0; }
+    }
+
+    .loading-cloud {
+      text-align: center;
+      padding: 60px;
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .empty-cloud {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,0.6);
+    }
+    .empty-cloud p { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    .file-input-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(94,176,245,0.15);
+      border: 2px dashed rgba(94,176,245,0.5);
+      border-radius: 16px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sky-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: all 0.2s;
+      width: 100%;
+      justify-content: center;
+    }
+    .file-input-label:hover { background: rgba(94,176,245,0.25); }
+    input[type="file"] { display: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo" onclick="loadFeed()">☁ Облака</span>
+  <div class="nav-actions" id="nav-actions">
+    <button class="nav-btn" onclick="openAuthModal()">Войти</button>
+  </div>
+</nav>
+
+<div id="feed-page" class="page active">
+  <div class="clouds-container" id="posts-container">
+    <div class="loading-cloud">Загружаем облака...</div>
+  </div>
+</div>
+
+<div id="profile-page" class="page">
+  <div id="profile-content"></div>
+</div>
+
+<button class="add-post-btn" onclick="openPostModal()">✦ добавить пост</button>
+
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-cloud">
+    <button class="modal-close" onclick="closeModal('auth-modal')">×</button>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('login')">Войти</button>
+      <button class="modal-tab" onclick="switchTab('register')">Регистрация</button>
+    </div>
+    <div id="login-form">
+      <div class="form-group">
+        <label class="form-label">Имя пользователя</label>
+        <input type="text" class="form-input" id="login-username" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" class="form-input" id="login-password" placeholder="••••••">
+      </div>
+      <div class="error-msg" id="login-error"></div>
+      <button class="form-btn" onclick="doLogin()">Войти</button>
+    </div>
+    <div id="register-form" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Имя пользователя</label>
+        <input type="text" class="form-input" id="reg-username" placeholder="только буквы, цифры, _">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" class="form-input" id="reg-password" placeholder="минимум 6 символов">
+      </div>
+      <div class="error-msg" id="reg-error"></div>
+      <button class="form-btn" onclick="doRegister()">Создать аккаунт</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="post-modal">
+  <div class="modal-cloud">
+    <button class="modal-close" onclick="closeModal('post-modal')">×</button>
+    <div class="modal-title">☁ Новый пост</div>
+    <div class="form-group">
+      <label class="form-label">Текст (максимум 50 слов)</label>
+      <textarea class="form-textarea" id="post-content" placeholder="Что у вас на душе?" oninput="updateWordCount()"></textarea>
+      <div class="word-count" id="word-count">0 / 50</div>
+    </div>
+    <div class="form-group">
+      <label class="file-input-label" for="post-image">📷 Прикрепить фото (необязательно)</label>
+      <input type="file" id="post-image" accept="image/*" onchange="previewImage()">
+      <img id="img-preview" class="img-preview">
+    </div>
+    <div class="error-msg" id="post-error"></div>
+    <button class="form-btn" onclick="submitPost()" id="post-submit-btn">Опубликовать</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-profile-modal">
+  <div class="modal-cloud">
+    <button class="modal-close" onclick="closeModal('edit-profile-modal')">×</button>
+    <div class="modal-title">Редактировать профиль</div>
+    <div class="form-group">
+      <label class="form-label">Аватар</label>
+      <label class="file-input-label" for="avatar-input">🌙 Загрузить аватар</label>
+      <input type="file" id="avatar-input" accept="image/*">
+    </div>
+    <div class="form-group">
+      <label class="form-label">О себе (до 200 символов)</label>
+      <textarea class="form-textarea" id="edit-about" placeholder="Расскажи о себе..." style="min-height:80px"></textarea>
+    </div>
+    <div class="error-msg" id="edit-profile-error"></div>
+    <button class="form-btn" onclick="saveProfile()">Сохранить</button>
+  </div>
+</div>
+
+<div class="rain-container" id="rain-container"></div>
+
+<script>
+let currentUser = null;
+
+async function init() {
+  const res = await fetch('/api/me');
+  const data = await res.json();
+  currentUser = data.user;
+  updateNav();
+  loadFeed();
+}
+
+function updateNav() {
+  const nav = document.getElementById('nav-actions');
+  if (currentUser) {
+    nav.innerHTML = `
+      <span class="nav-user" onclick="showProfile('${currentUser.username}')">${currentUser.username}</span>
+      <button class="nav-btn dark" onclick="doLogout()">Выйти</button>
+    `;
+  } else {
+    nav.innerHTML = `<button class="nav-btn" onclick="openAuthModal()">Войти / Регистрация</button>`;
+  }
+}
+
+async function loadFeed() {
+  showPage('feed-page');
+  const container = document.getElementById('posts-container');
+  container.innerHTML = '<div class="loading-cloud">Загружаем облака...</div>';
+  const res = await fetch('/api/posts');
+  const posts = await res.json();
+  if (posts.length === 0) {
+    container.innerHTML = '<div class="empty-cloud"><p>☁ Облака пока пусты<br><small>Будь первым!</small></p></div>';
+    return;
+  }
+  container.innerHTML = '';
+  posts.forEach((post, i) => container.appendChild(createPostEl(post, i)));
+}
+
+function createPostEl(post, index = 0) {
+  const div = document.createElement('div');
+  div.className = 'cloud-post';
+  div.id = `post-${post.id}`;
+  div.style.animationDelay = `${index * 0.06}s`;
+  const canDelete = currentUser && (currentUser.username === 'siteowner' || currentUser.id === post.user_id);
+  const timeStr = formatTime(post.created_at);
+  const likeActive = post.my_reaction === 'like' ? 'active-like' : '';
+  const dislikeActive = post.my_reaction === 'dislike' ? 'active-dislike' : '';
+  div.innerHTML = `
+    <div class="cloud-post-pair">
+      <div style="flex:1">
+        <div class="cloud-shape">
+          <div class="cloud-extra-bump"></div>
+          <div class="cloud-author" onclick="showProfile('${post.username}')">@${post.username}</div>
+          <div class="cloud-text">${escapeHtml(post.content)}</div>
+          <div class="cloud-reactions">
+            <button class="reaction-btn ${likeActive}" onclick="react(${post.id}, 'like', this)">
+              <span class="reaction-icon">🌈</span>
+              <span class="reaction-count">${post.likes}</span>
+            </button>
+            <button class="reaction-btn ${dislikeActive}" onclick="react(${post.id}, 'dislike', this)">
+              <span class="reaction-icon">🌧</span>
+              <span class="reaction-count">${post.dislikes}</span>
+            </button>
+            <span class="cloud-time">${timeStr}</span>
+            ${canDelete ? `<button class="delete-btn" onclick="deletePost(${post.id})">✕</button>` : ''}
+          </div>
+        </div>
+      </div>
+      ${post.image_url ? `
+        <div class="cloud-photo">
+          <div class="cloud-photo-shape">
+            <img src="${post.image_url}" class="cloud-photo-img" alt="photo">
+            <div class="photo-circle">Photo</div>
+          </div>
+        </div>` : ''}
+    </div>`;
+  return div;
+}
+
+async function react(postId, type, btn) {
+  if (!currentUser) { openAuthModal(); return; }
+  const postEl = document.getElementById(`post-${postId}`);
+  const allBtns = postEl.querySelectorAll('.reaction-btn');
+  const res = await fetch(`/api/posts/${postId}/react`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type })
+  });
+  const data = await res.json();
+  allBtns[0].querySelector('.reaction-count').textContent = data.likes;
+  allBtns[1].querySelector('.reaction-count').textContent = data.dislikes;
+  allBtns[0].className = 'reaction-btn' + (data.my_reaction === 'like' ? ' active-like' : '');
+  allBtns[1].className = 'reaction-btn' + (data.my_reaction === 'dislike' ? ' active-dislike' : '');
+  if (type === 'like' && data.my_reaction === 'like') triggerRainbow(postEl);
+  else if (type === 'dislike' && data.my_reaction === 'dislike') triggerRain(postEl);
+}
+
+function triggerRainbow(sourceEl) {
+  const rect = sourceEl.getBoundingClientRect();
+  const startX = rect.left + rect.width / 2;
+  const startY = rect.top + rect.height / 2;
+  const colors = ['#ff6b6b','#ff9f43','#ffd93d','#6bcb77','#4d96ff','#c77dff'];
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:999;';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const duration = 1500;
+  const start = performance.now();
+  function draw(t) {
+    const elapsed = t - start;
+    const progress = Math.min(elapsed / duration, 1);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const eased = progress < 0.5 ? 2*progress*progress : -1+(4-2*progress)*progress;
+    colors.forEach((color, i) => {
+      const alpha = Math.sin(progress * Math.PI) * 0.8;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      const cx = startX + (window.innerWidth - startX) * 0.3;
+      const cy = startY - 200 * eased;
+      ctx.quadraticCurveTo(cx, cy, startX + (window.innerWidth - startX) * eased, startY + (0 - startY) * eased);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 8 - i * 0.5;
+      ctx.globalAlpha = alpha;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    if (progress < 1) requestAnimationFrame(draw);
+    else canvas.remove();
+  }
+  requestAnimationFrame(draw);
+}
+
+function triggerRain(sourceEl) {
+  const rect = sourceEl.getBoundingClientRect();
+  const container = document.getElementById('rain-container');
+  container.style.display = 'block';
+  container.style.left = rect.left + 'px';
+  container.style.top = rect.bottom + 'px';
+  container.style.width = rect.width + 'px';
+  container.style.height = '120px';
+  container.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.height = (10 + Math.random() * 20) + 'px';
+    drop.style.animationDuration = (0.4 + Math.random() * 0.4) + 's';
+    drop.style.animationDelay = (Math.random() * 0.6) + 's';
+    container.appendChild(drop);
+  }
+  setTimeout(() => { container.style.display = 'none'; container.innerHTML = ''; }, 1800);
+}
+
+function openPostModal() {
+  if (!currentUser) { openAuthModal(); return; }
+  document.getElementById('post-content').value = '';
+  document.getElementById('post-image').value = '';
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('post-error').className = 'error-msg';
+  document.getElementById('word-count').textContent = '0 / 50';
+  openModal('post-modal');
+}
+
+function updateWordCount() {
+  const text = document.getElementById('post-content').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const counter = document.getElementById('word-count');
+  counter.textContent = `${words} / 50`;
+  counter.className = words > 50 ? 'word-count over' : 'word-count';
+}
+
+function previewImage() {
+  const file = document.getElementById('post-image').files[0];
+  const preview = document.getElementById('img-preview');
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(file);
+  } else {
+    preview.style.display = 'none';
+  }
+}
+
+async function submitPost() {
+  const content = document.getElementById('post-content').value.trim();
+  const imageFile = document.getElementById('post-image').files[0];
+  const errEl = document.getElementById('post-error');
+  const btn = document.getElementById('post-submit-btn');
+  if (!content) { showError(errEl, 'Напишите что-нибудь!'); return; }
+  if (content.split(/\s+/).length > 50) { showError(errEl, 'Максимум 50 слов!'); return; }
+  btn.disabled = true; btn.textContent = 'Публикуем...';
+  const formData = new FormData();
+  formData.append('content', content);
+  if (imageFile) formData.append('image', imageFile);
+  try {
+    const res = await fetch('/api/posts', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok) { showError(errEl, data.error); btn.disabled = false; btn.textContent = 'Опубликовать'; return; }
+    closeModal('post-modal');
+    const container = document.getElementById('posts-container');
+    const loadingEl = container.querySelector('.loading-cloud, .empty-cloud');
+    if (loadingEl) loadingEl.remove();
+    const postEl = createPostEl(data, 0);
+    postEl.style.animationDelay = '0s';
+    container.insertBefore(postEl, container.firstChild);
+  } catch (e) { showError(errEl, 'Ошибка сервера'); }
+  btn.disabled = false; btn.textContent = 'Опубликовать';
+}
+
+async function deletePost(id) {
+  if (!confirm('Удалить этот пост?')) return;
+  const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
+  if (res.ok) document.getElementById(`post-${id}`)?.remove();
+}
+
+async function showProfile(username) {
+  showPage('profile-page');
+  const content = document.getElementById('profile-content');
+  content.innerHTML = '<div class="loading-cloud" style="color:rgba(255,255,255,0.5)">Загружаем профиль...</div>';
+  const res = await fetch(`/api/profile/${username}`);
+  const data = await res.json();
+  if (!res.ok) { content.innerHTML = '<div class="loading-cloud" style="color:rgba(255,255,255,0.5)">Профиль не найден</div>'; return; }
+  const { user, posts } = data;
+  const isMe = currentUser && currentUser.id === user.id;
+  content.innerHTML = `
+    <div class="profile-header">
+      <div class="profile-moon">
+        ${user.avatar_url ? `<img src="${user.avatar_url}" alt="avatar">` : `<div class="profile-moon-placeholder">☽</div>`}
+      </div>
+      <div class="profile-name">${escapeHtml(user.username)}</div>
+      <div class="profile-about">${user.about ? escapeHtml(user.about) : 'Нет информации о себе'}</div>
+      ${isMe ? `<button class="profile-edit-btn" onclick="openEditProfile()">Редактировать профиль</button>` : ''}
+    </div>
+    <div class="profile-posts">
+      ${posts.length === 0
+        ? `<div class="empty-cloud"><p>Постов ещё нет</p></div>`
+        : posts.map(p => `
+          <div class="profile-cloud">
+            <div class="profile-cloud-text">${escapeHtml(p.content)}</div>
+            ${p.image_url ? `<img src="${p.image_url}" style="max-width:100%;border-radius:16px;margin-top:10px;">` : ''}
+            <div class="profile-cloud-time">${formatTime(p.created_at)} · 🌈${p.likes} 🌧${p.dislikes}</div>
+          </div>`).join('')}
+    </div>`;
+}
+
+function openEditProfile() {
+  document.getElementById('edit-about').value = currentUser.about || '';
+  openModal('edit-profile-modal');
+}
+
+async function saveProfile() {
+  const about = document.getElementById('edit-about').value;
+  const avatarFile = document.getElementById('avatar-input').files[0];
+  const errEl = document.getElementById('edit-profile-error');
+  const formData = new FormData();
+  formData.append('about', about);
+  if (avatarFile) formData.append('avatar', avatarFile);
+  const res = await fetch('/api/profile', { method: 'PUT', body: formData });
+  const data = await res.json();
+  if (!res.ok) { showError(errEl, data.error); return; }
+  currentUser = { ...currentUser, ...data };
+  closeModal('edit-profile-modal');
+  showProfile(currentUser.username);
+}
+
+function openAuthModal() { openModal('auth-modal'); }
+
+function switchTab(tab) {
+  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+  document.querySelectorAll('.modal-tab').forEach((t, i) => {
+    t.className = 'modal-tab' + ((i === 0 && tab === 'login') || (i === 1 && tab === 'register') ? ' active' : '');
+  });
+}
+
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+  if (!res.ok) { showError(errEl, data.error); return; }
+  const meRes = await fetch('/api/me');
+  currentUser = (await meRes.json()).user;
+  closeModal('auth-modal');
+  updateNav();
+  loadFeed();
+}
+
+async function doRegister() {
+  const username = document.getElementById('reg-username').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const errEl = document.getElementById('reg-error');
+  const res = await fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+  if (!res.ok) { showError(errEl, data.error); return; }
+  const meRes = await fetch('/api/me');
+  currentUser = (await meRes.json()).user;
+  closeModal('auth-modal');
+  updateNav();
+  loadFeed();
+}
+
+async function doLogout() {
+  await fetch('/api/logout', { method: 'POST' });
+  currentUser = null;
+  updateNav();
+  loadFeed();
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showError(el, msg) { el.textContent = msg; el.className = 'error-msg show'; }
+function escapeHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatTime(dateStr) {
+  const d = new Date(dateStr);
+  const diff = (new Date() - d) / 1000;
+  if (diff < 60) return 'только что';
+  if (diff < 3600) return Math.floor(diff / 60) + ' мин назад';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' ч назад';
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+
+init();
+</script>
+</body>
+</html>
