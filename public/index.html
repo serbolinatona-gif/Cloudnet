@@ -3,31 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Облака — социальная сеть</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <title>CLOUDNET</title>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Geologica:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --sky: #5eb0f5;
-      --sky-dark: #3a8fd4;
-      --cloud: rgba(255,255,255,0.88);
-      --cloud-border: rgba(255,255,255,0.6);
-      --ink: #1a1a2e;
-      --night: #0d0d1a;
-      --moon: #ffffff;
-      --green: #7fff00;
+      --sky: #4BA3E3;
+      --sky-light: #6BBEF5;
+      --sky-deep: #2B7CC1;
+      --night: #0A0A14;
+      --night2: #111122;
+      --moon-white: #F0EFEA;
+      --cloud-white: #F5F4EF;
+      --chalk-dark: #1A1A2E;
+      --green-chalk: #7FE840;
+      --ink: #0D0D1A;
+      --sun: #FFD93D;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: 'Futura', 'Century Gothic', 'Nunito', sans-serif;
-      background: var(--sky);
+    html, body {
+      font-family: 'Geologica', sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
+      cursor: default;
     }
 
+    body {
+      background: var(--sky);
+      position: relative;
+    }
+
+    /* Animated sky gradient */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(255,255,255,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(43,124,193,0.4) 0%, transparent 60%),
+        linear-gradient(180deg, #7BC8F0 0%, #4BA3E3 40%, #2B7CC1 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== LANG SWITCH ===== */
+    .lang-switch {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 200;
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 50px;
+      display: flex;
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+    .lang-btn {
+      padding: 6px 14px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .lang-btn.active {
+      background: white;
+      color: var(--sky-deep);
+      border-radius: 50px;
+    }
+
+    /* ===== NAV ===== */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -35,590 +85,793 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(12px);
-      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding: 16px 28px;
     }
 
     .nav-logo {
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
       color: white;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      letter-spacing: 0.08em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
       cursor: pointer;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      position: relative;
+      z-index: 1;
+    }
+    .nav-logo span { color: var(--moon-white); opacity: 0.7; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      margin-right: 100px;
     }
 
-    .nav-actions { display: flex; gap: 10px; align-items: center; }
-
-    .nav-btn {
-      background: rgba(255,255,255,0.9);
-      border: none;
+    .nav-pill {
+      background: rgba(255,255,255,0.22);
+      border: 2px solid rgba(255,255,255,0.45);
       border-radius: 50px;
-      padding: 8px 18px;
-      font-family: inherit;
-      font-size: 0.85rem;
+      padding: 8px 20px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.65rem;
       font-weight: 700;
+      color: white;
+      letter-spacing: 0.08em;
       cursor: pointer;
-      color: var(--ink);
-      letter-spacing: 0.05em;
+      backdrop-filter: blur(8px);
       transition: all 0.2s;
       text-transform: uppercase;
     }
-    .nav-btn:hover { background: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .nav-btn.dark { background: var(--night); color: white; }
-    .nav-btn.dark:hover { background: #222240; }
+    .nav-pill:hover {
+      background: rgba(255,255,255,0.38);
+      transform: translateY(-1px);
+    }
+    .nav-pill.dark {
+      background: var(--night);
+      border-color: var(--night);
+      color: white;
+    }
+    .nav-pill.dark:hover { background: #1a1a30; }
 
     .nav-user {
-      display: flex; align-items: center; gap: 8px;
-      color: white; font-weight: 700; font-size: 0.9rem;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.08em;
       cursor: pointer;
+      text-transform: uppercase;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.2);
     }
     .nav-user:hover { text-decoration: underline; }
 
-    .page { display: none; padding-top: 70px; min-height: 100vh; }
+    /* ===== PAGES ===== */
+    .page { display: none; }
     .page.active { display: block; }
 
-    #feed-page { padding: 80px 20px 40px; }
+    /* ===== FEED ===== */
+    #feed-page {
+      padding: 100px 24px 120px;
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+    }
 
-    .clouds-container {
-      max-width: 900px;
+    .feed-inner {
+      max-width: 860px;
       margin: 0 auto;
-      position: relative;
-      min-height: 400px;
     }
 
+    /* ===== CHALK CLOUD POST ===== */
     .cloud-post {
+      margin: 0 auto 48px;
+      max-width: 440px;
       position: relative;
-      margin: 30px auto;
-      max-width: 420px;
-      animation: floatIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      animation: driftIn 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) both;
     }
 
-    @keyframes floatIn {
-      from { opacity: 0; transform: translateY(30px) scale(0.9); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    @keyframes driftIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.88); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
     }
 
-    .cloud-post:nth-child(odd) { margin-left: 5%; }
-    .cloud-post:nth-child(even) { margin-left: 25%; }
-    .cloud-post:nth-child(3n) { margin-left: 15%; }
+    .cloud-post:nth-child(2n)   { margin-left: 8%; margin-right: auto; }
+    .cloud-post:nth-child(3n)   { margin-left: auto; margin-right: 4%; }
+    .cloud-post:nth-child(4n)   { margin-left: 18%; }
+    .cloud-post:nth-child(5n)   { margin-left: 2%; }
 
-    .cloud-shape {
-      background: var(--cloud);
-      border-radius: 50px;
-      padding: 22px 28px;
+    /* SVG chalk cloud wrapper */
+    .cloud-svg-wrap {
       position: relative;
-      box-shadow:
-        0 8px 32px rgba(0,0,0,0.08),
-        inset 0 2px 0 rgba(255,255,255,0.9),
-        0 0 0 2px rgba(255,255,255,0.5);
+      filter: drop-shadow(0 6px 18px rgba(10,20,50,0.13));
     }
 
-    .cloud-shape::before,
-    .cloud-shape::after {
-      content: '';
+    .cloud-svg-wrap svg.cloud-bg {
       position: absolute;
-      background: var(--cloud);
-      border-radius: 50%;
-      box-shadow: inset 0 2px 0 rgba(255,255,255,0.9);
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
     }
-    .cloud-shape::before { width: 70px; height: 70px; top: -25px; left: 30px; }
-    .cloud-shape::after { width: 50px; height: 50px; top: -15px; left: 80px; }
 
-    .cloud-extra-bump {
-      position: absolute;
-      width: 45px; height: 45px;
-      background: var(--cloud);
-      border-radius: 50%;
-      top: -12px; left: 120px;
-      box-shadow: inset 0 2px 0 rgba(255,255,255,0.9);
+    .cloud-body {
+      position: relative;
+      z-index: 2;
+      padding: 26px 30px 18px;
     }
 
     .cloud-author {
-      font-size: 0.72rem;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.6rem;
       font-weight: 700;
-      color: var(--sky-dark);
+      color: var(--sky-deep);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 8px;
+      letter-spacing: 0.12em;
+      margin-bottom: 9px;
       cursor: pointer;
     }
     .cloud-author:hover { text-decoration: underline; }
 
     .cloud-text {
-      font-size: 0.95rem;
+      font-family: 'Geologica', sans-serif;
+      font-size: 1rem;
       color: var(--ink);
-      line-height: 1.5;
+      line-height: 1.55;
+      font-weight: 400;
     }
 
-    .cloud-post-pair { display: flex; align-items: flex-end; }
+    /* Chalk line decorations */
+    .chalk-lines {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .chalk-line {
+      height: 2.5px;
+      background: var(--ink);
+      border-radius: 4px;
+      opacity: 0.08;
+    }
+    .chalk-line:nth-child(1) { width: 100%; }
+    .chalk-line:nth-child(2) { width: 72%; }
+    .chalk-line:nth-child(3) { width: 48%; }
 
-    .cloud-photo {
-      width: 90px;
+    /* ===== PHOTO CLOUD ===== */
+    .post-with-photo {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .post-with-photo .cloud-svg-wrap { flex: 1; }
+
+    .photo-cloud {
+      width: 96px;
       flex-shrink: 0;
-      margin-left: 10px;
       position: relative;
+      filter: drop-shadow(0 4px 12px rgba(10,20,50,0.12));
     }
-    .cloud-photo-shape {
-      background: var(--cloud);
-      border-radius: 40px;
+    .photo-cloud-inner {
+      background: var(--cloud-white);
+      border-radius: 36px 36px 28px 28px;
       padding: 8px;
       position: relative;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     }
-    .cloud-photo-shape::before {
+    .photo-cloud-inner::before,
+    .photo-cloud-inner::after {
       content: '';
       position: absolute;
-      width: 35px; height: 35px;
-      background: var(--cloud);
+      background: var(--cloud-white);
       border-radius: 50%;
-      top: -12px; left: 15px;
     }
-    .cloud-photo-img {
+    .photo-cloud-inner::before { width: 42px; height: 42px; top: -18px; left: 12px; }
+    .photo-cloud-inner::after  { width: 30px; height: 30px; top: -12px; left: 42px; }
+
+    .photo-img {
       width: 100%;
-      border-radius: 30px;
-      display: block;
+      height: 72px;
       object-fit: cover;
-      height: 70px;
+      border-radius: 24px 24px 20px 20px;
+      display: block;
     }
-    .photo-circle {
-      width: 36px; height: 36px;
-      background: var(--green);
-      border-radius: 50%;
+    .photo-badge {
       position: absolute;
-      top: -8px; right: -8px;
-      border: 2px solid var(--ink);
+      top: -6px; right: -6px;
+      width: 34px; height: 34px;
+      background: var(--green-chalk);
+      border-radius: 50%;
+      border: 2.5px solid var(--ink);
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.55rem;
-      font-weight: 700;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.42rem;
+      font-weight: 900;
       color: var(--ink);
       text-transform: uppercase;
+      letter-spacing: 0.03em;
+      z-index: 3;
     }
 
+    /* ===== REACTIONS ===== */
     .cloud-reactions {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(0,0,0,0.06);
+      gap: 8px;
+      padding: 10px 0 0;
+      margin-top: 8px;
+      border-top: 1.5px solid rgba(10,10,30,0.07);
     }
 
-    .reaction-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex; align-items: center; gap: 4px;
-      font-family: inherit;
-      font-size: 0.8rem;
+    .rxn-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: none; border: none; cursor: pointer;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.6rem;
       font-weight: 700;
       color: var(--ink);
-      opacity: 0.6;
-      transition: all 0.2s;
-      padding: 4px 8px;
-      border-radius: 20px;
+      opacity: 0.45;
+      padding: 5px 10px;
+      border-radius: 50px;
+      transition: all 0.18s;
+      letter-spacing: 0.04em;
     }
-    .reaction-btn:hover { opacity: 1; background: rgba(0,0,0,0.05); }
-    .reaction-btn.active-like { opacity: 1; color: #e74c3c; }
-    .reaction-btn.active-dislike { opacity: 1; color: #3498db; }
-    .reaction-icon { font-size: 1rem; }
+    .rxn-btn:hover { opacity: 0.9; background: rgba(0,0,0,0.05); }
+    .rxn-btn.liked  { opacity: 1; color: #e8375a; }
+    .rxn-btn.disliked { opacity: 1; color: #3a8fd4; }
+    .rxn-icon { font-size: 1.05rem; line-height: 1; }
 
-    .cloud-time {
+    .cloud-meta {
       margin-left: auto;
-      font-size: 0.68rem;
-      color: rgba(26,26,46,0.4);
+      display: flex; align-items: center; gap: 6px;
     }
-
-    .delete-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: rgba(26,26,46,0.3);
-      font-size: 1rem;
-      transition: color 0.2s;
-      padding: 4px;
+    .cloud-time {
+      font-family: 'Geologica', sans-serif;
+      font-size: 0.65rem;
+      color: rgba(10,10,30,0.35);
     }
-    .delete-btn:hover { color: #e74c3c; }
+    .del-btn {
+      background: none; border: none; cursor: pointer;
+      color: rgba(10,10,30,0.25);
+      font-size: 0.85rem;
+      transition: color 0.15s;
+      padding: 2px 4px;
+    }
+    .del-btn:hover { color: #e8375a; }
 
-    .add-post-btn {
+    /* ===== ADD POST BTN ===== */
+    .fab {
       position: fixed;
-      bottom: 30px; right: 30px;
+      bottom: 32px; right: 32px;
+      z-index: 50;
       background: var(--night);
       color: white;
       border: none;
       border-radius: 50px;
-      padding: 14px 28px;
-      font-family: inherit;
-      font-size: 0.9rem;
+      padding: 16px 30px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.68rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
-      transition: all 0.2s;
-      z-index: 50;
+      box-shadow: 0 8px 28px rgba(10,10,30,0.28);
+      transition: all 0.22s;
     }
-    .add-post-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .fab:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(10,10,30,0.35); }
 
-    .modal-overlay {
+    /* ===== MODAL ===== */
+    .overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(4px);
+      background: rgba(5,5,15,0.55);
+      backdrop-filter: blur(6px);
       z-index: 500;
       display: none;
       align-items: center;
       justify-content: center;
     }
-    .modal-overlay.open { display: flex; }
+    .overlay.open { display: flex; }
 
-    .modal-cloud {
+    .modal {
       background: white;
-      border-radius: 30px;
-      padding: 36px;
-      max-width: 480px;
-      width: 90%;
+      border-radius: 28px;
+      padding: 38px;
+      max-width: 470px;
+      width: 92%;
       position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 24px 64px rgba(10,10,30,0.22);
+      animation: popUp 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
     }
-    @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    @keyframes popUp {
+      from { transform: scale(0.82) translateY(20px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
     }
+
+    .modal-x {
+      position: absolute; top: 18px; right: 22px;
+      background: none; border: none;
+      font-size: 1.3rem; cursor: pointer;
+      color: rgba(0,0,0,0.28); line-height: 1;
+      transition: color 0.15s;
+    }
+    .modal-x:hover { color: var(--ink); }
 
     .modal-title {
-      font-size: 1.2rem;
-      font-weight: 700;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
       color: var(--ink);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 20px;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px; right: 20px;
-      background: none; border: none;
-      font-size: 1.4rem; cursor: pointer;
-      color: rgba(0,0,0,0.3);
-    }
-    .modal-close:hover { color: var(--ink); }
-
-    .form-group { margin-bottom: 16px; }
-    .form-label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: rgba(0,0,0,0.5);
-      margin-bottom: 6px;
+      margin-bottom: 22px;
     }
 
-    .form-input, .form-textarea {
+    .tabs {
+      display: flex;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 2px solid #EEEEF4;
+      margin-bottom: 22px;
+    }
+    .tab {
+      flex: 1; padding: 10px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.6rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      border: none; background: transparent;
+      color: rgba(0,0,0,0.35); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab.active { background: var(--night); color: white; border-radius: 12px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.58rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(0,0,0,0.4);
+      margin-bottom: 6px;
+    }
+    .finput, .ftextarea {
       width: 100%;
-      border: 2px solid rgba(0,0,0,0.1);
-      border-radius: 16px;
+      border: 2px solid #EEEEF4;
+      border-radius: 14px;
       padding: 12px 16px;
-      font-family: inherit;
+      font-family: 'Geologica', sans-serif;
       font-size: 0.95rem;
       color: var(--ink);
-      background: #f8f8fc;
-      transition: border-color 0.2s;
+      background: #F9F9FC;
       outline: none;
+      transition: border-color 0.18s, background 0.18s;
     }
-    .form-input:focus, .form-textarea:focus {
+    .finput:focus, .ftextarea:focus {
       border-color: var(--sky);
       background: white;
     }
-    .form-textarea { resize: vertical; min-height: 100px; }
+    .ftextarea { resize: vertical; min-height: 96px; }
 
-    .word-count {
+    .wcount {
       text-align: right;
-      font-size: 0.72rem;
-      color: rgba(0,0,0,0.4);
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.58rem;
+      color: rgba(0,0,0,0.3);
       margin-top: 4px;
+      letter-spacing: 0.05em;
     }
-    .word-count.over { color: #e74c3c; font-weight: 700; }
+    .wcount.over { color: #e8375a; font-weight: 700; }
 
-    .form-btn {
-      width: 100%;
-      background: var(--night);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 14px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .file-label {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      border: 2px dashed rgba(75,163,227,0.4);
+      background: rgba(75,163,227,0.06);
+      border-radius: 14px;
+      padding: 11px;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 8px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.58rem; font-weight: 700;
+      color: var(--sky-deep);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      transition: all 0.18s;
+      width: 100%;
     }
-    .form-btn:hover { background: #222240; transform: translateY(-1px); }
-    .form-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .file-label:hover { background: rgba(75,163,227,0.12); }
+    input[type="file"] { display: none; }
 
-    .error-msg {
-      color: #e74c3c;
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-top: 8px;
-      display: none;
+    .img-prev {
+      margin-top: 10px; border-radius: 14px;
+      max-height: 110px; max-width: 100%;
+      object-fit: cover; display: none;
     }
-    .error-msg.show { display: block; }
 
-    .img-preview {
+    .submit-btn {
+      width: 100%;
+      background: var(--night); color: white; border: none;
+      border-radius: 50px; padding: 15px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      cursor: pointer; transition: all 0.2s;
       margin-top: 10px;
-      border-radius: 16px;
-      max-height: 120px;
-      max-width: 100%;
-      display: none;
-      object-fit: cover;
     }
+    .submit-btn:hover { background: #1a1a30; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-    .modal-tabs {
-      display: flex;
-      margin-bottom: 24px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 2px solid rgba(0,0,0,0.08);
+    .err {
+      color: #e8375a;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.62rem; font-weight: 700;
+      margin-top: 8px; display: none;
+      letter-spacing: 0.04em;
     }
-    .modal-tab {
-      flex: 1; padding: 10px; text-align: center;
-      font-family: inherit; font-size: 0.82rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.06em;
-      cursor: pointer; border: none; background: transparent;
-      color: rgba(0,0,0,0.4); transition: all 0.2s;
-    }
-    .modal-tab.active { background: var(--night); color: white; }
+    .err.show { display: block; }
 
+    /* ===== PROFILE PAGE ===== */
     #profile-page {
       background: var(--night);
       min-height: 100vh;
-      padding: 80px 20px 40px;
+      padding: 0;
+      position: relative;
     }
 
-    .profile-header {
-      max-width: 500px;
-      margin: 0 auto 40px;
+    .profile-sky {
+      background: linear-gradient(180deg, #0A0A14 0%, #0d1020 100%);
+      padding: 100px 24px 60px;
       text-align: center;
-    }
-
-    .profile-moon {
-      width: 100px; height: 100px;
-      background: white;
-      border-radius: 50%;
-      margin: 0 auto 16px;
       position: relative;
       overflow: hidden;
-      cursor: pointer;
-      box-shadow: 0 0 40px rgba(255,255,255,0.3);
     }
-    .profile-moon img { width: 100%; height: 100%; object-fit: cover; }
-    .profile-moon-placeholder {
+
+    /* Stars on profile */
+    .profile-sky::before {
+      content: '★ · ✦ · ★ · · ✦ · ★ · ✦ · · ★ · ✦ · ★';
+      position: absolute;
+      top: 24px; left: 0; right: 0;
+      text-align: center;
+      font-size: 0.5rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.5em;
+      pointer-events: none;
+    }
+
+    .profile-moon-wrap {
+      width: 110px; height: 110px;
+      background: var(--moon-white);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,0.08),
+        0 0 60px rgba(240,239,234,0.15),
+        0 8px 32px rgba(0,0,0,0.4);
+      transition: box-shadow 0.3s;
+    }
+    .profile-moon-wrap:hover {
+      box-shadow:
+        0 0 0 4px rgba(255,255,255,0.15),
+        0 0 80px rgba(240,239,234,0.25),
+        0 8px 32px rgba(0,0,0,0.4);
+    }
+    .profile-moon-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .moon-placeholder {
       width: 100%; height: 100%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; color: rgba(0,0,0,0.2);
+      font-size: 2.4rem; color: rgba(10,10,20,0.2);
     }
 
     .profile-name {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: white;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 1.5rem; font-weight: 900;
+      color: var(--moon-white);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
     }
     .profile-about {
-      color: rgba(255,255,255,0.5);
+      color: rgba(240,239,234,0.45);
       font-size: 0.9rem;
-      margin-top: 8px;
-      line-height: 1.5;
+      margin-top: 10px;
+      line-height: 1.6;
+      max-width: 380px;
+      margin-left: auto; margin-right: auto;
     }
     .profile-edit-btn {
-      margin-top: 16px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
+      margin-top: 18px;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
       border-radius: 50px;
-      padding: 8px 20px;
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 9px 22px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.58rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      cursor: pointer; transition: all 0.2s;
     }
-    .profile-edit-btn:hover { background: rgba(255,255,255,0.2); }
+    .profile-edit-btn:hover { background: rgba(255,255,255,0.13); color: white; }
 
-    .profile-posts { max-width: 500px; margin: 0 auto; }
+    .profile-posts-section {
+      background: var(--night2);
+      padding: 40px 24px 60px;
+    }
+    .profile-posts-inner { max-width: 520px; margin: 0 auto; }
 
-    .profile-cloud {
-      background: rgba(255,255,255,0.08);
-      border-radius: 30px;
+    .section-label {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.6rem; font-weight: 700;
+      color: rgba(255,255,255,0.22);
+      text-transform: uppercase; letter-spacing: 0.15em;
+      margin-bottom: 24px;
+    }
+
+    .profile-post-card {
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 22px;
       padding: 20px 24px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 16px;
     }
-    .profile-cloud-text { color: rgba(255,255,255,0.85); font-size: 0.9rem; line-height: 1.5; }
-    .profile-cloud-time { color: rgba(255,255,255,0.3); font-size: 0.7rem; margin-top: 8px; }
+    .profile-post-text {
+      color: rgba(240,239,234,0.82);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+    .profile-post-meta {
+      color: rgba(255,255,255,0.22);
+      font-size: 0.62rem;
+      margin-top: 10px;
+      font-family: 'Unbounded', sans-serif;
+      letter-spacing: 0.04em;
+    }
 
-    .rain-container {
+    /* ===== EMPTY / LOADING ===== */
+    .state-msg {
+      text-align: center;
+      padding: 80px 20px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== RAINBOW CANVAS ===== */
+    #rainbow-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+
+    /* ===== RAIN ===== */
+    #rain-stage {
       position: fixed;
       pointer-events: none;
       z-index: 998;
+      overflow: hidden;
       display: none;
     }
-    .raindrop {
+
+    .drop {
       position: absolute;
-      width: 2px;
-      background: linear-gradient(to bottom, transparent, rgba(100,150,255,0.8));
+      width: 1.5px;
       border-radius: 2px;
-      animation: fall linear forwards;
+      background: linear-gradient(to bottom, transparent, rgba(130,190,255,0.85));
+      animation: drip linear forwards;
     }
-    @keyframes fall {
-      0% { transform: translateY(-20px); opacity: 1; }
-      100% { transform: translateY(100px); opacity: 0; }
+    @keyframes drip {
+      0%   { transform: translateY(-30px) scaleY(0.5); opacity: 0.9; }
+      100% { transform: translateY(140px) scaleY(1.2); opacity: 0; }
     }
 
-    .loading-cloud {
-      text-align: center;
-      padding: 60px;
-      color: rgba(255,255,255,0.7);
-      font-size: 1rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-    .empty-cloud {
-      text-align: center;
-      padding: 60px 20px;
-      color: rgba(255,255,255,0.6);
-    }
-    .empty-cloud p { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
-
-    .file-input-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(94,176,245,0.15);
-      border: 2px dashed rgba(94,176,245,0.5);
-      border-radius: 16px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--sky-dark);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      transition: all 0.2s;
-      width: 100%;
-      justify-content: center;
-    }
-    .file-input-label:hover { background: rgba(94,176,245,0.25); }
-    input[type="file"] { display: none; }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 3px; }
   </style>
 </head>
 <body>
 
+<!-- Lang switch -->
+<div class="lang-switch">
+  <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<!-- Nav -->
 <nav>
-  <span class="nav-logo" onclick="loadFeed()">☁ Облака</span>
-  <div class="nav-actions" id="nav-actions">
-    <button class="nav-btn" onclick="openAuthModal()">Войти</button>
+  <div class="nav-logo" onclick="loadFeed()">☁ <span>ОБЛАКА</span></div>
+  <div class="nav-right" id="nav-right">
+    <button class="nav-pill" onclick="openAuthModal()" data-i="login_btn">Войти</button>
   </div>
 </nav>
 
+<!-- Feed -->
 <div id="feed-page" class="page active">
-  <div class="clouds-container" id="posts-container">
-    <div class="loading-cloud">Загружаем облака...</div>
+  <div class="feed-inner" id="posts-wrap">
+    <div class="state-msg" data-i="loading">Загружаем облака...</div>
   </div>
 </div>
 
+<!-- Profile -->
 <div id="profile-page" class="page">
   <div id="profile-content"></div>
 </div>
 
-<button class="add-post-btn" onclick="openPostModal()">✦ добавить пост</button>
+<!-- FAB -->
+<button class="fab" onclick="openPostModal()">
+  <span data-i="add_post">+ Добавить пост</span>
+</button>
 
-<div class="modal-overlay" id="auth-modal">
-  <div class="modal-cloud">
-    <button class="modal-close" onclick="closeModal('auth-modal')">×</button>
-    <div class="modal-tabs">
-      <button class="modal-tab active" onclick="switchTab('login')">Войти</button>
-      <button class="modal-tab" onclick="switchTab('register')">Регистрация</button>
+<!-- Auth modal -->
+<div class="overlay" id="m-auth">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('m-auth')">×</button>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')" data-i="tab_login">Войти</button>
+      <button class="tab" onclick="switchTab('register')" data-i="tab_reg">Регистрация</button>
     </div>
-    <div id="login-form">
-      <div class="form-group">
-        <label class="form-label">Имя пользователя</label>
-        <input type="text" class="form-input" id="login-username" placeholder="username">
+    <div id="f-login">
+      <div class="field">
+        <label data-i="username_label">Имя пользователя</label>
+        <input type="text" class="finput" id="l-user" placeholder="username">
       </div>
-      <div class="form-group">
-        <label class="form-label">Пароль</label>
-        <input type="password" class="form-input" id="login-password" placeholder="••••••">
+      <div class="field">
+        <label data-i="password_label">Пароль</label>
+        <input type="password" class="finput" id="l-pass" placeholder="••••••">
       </div>
-      <div class="error-msg" id="login-error"></div>
-      <button class="form-btn" onclick="doLogin()">Войти</button>
+      <div class="err" id="l-err"></div>
+      <button class="submit-btn" onclick="doLogin()" data-i="login_submit">Войти</button>
     </div>
-    <div id="register-form" style="display:none">
-      <div class="form-group">
-        <label class="form-label">Имя пользователя</label>
-        <input type="text" class="form-input" id="reg-username" placeholder="только буквы, цифры, _">
+    <div id="f-reg" style="display:none">
+      <div class="field">
+        <label data-i="username_label">Имя пользователя</label>
+        <input type="text" class="finput" id="r-user" placeholder="username">
       </div>
-      <div class="form-group">
-        <label class="form-label">Пароль</label>
-        <input type="password" class="form-input" id="reg-password" placeholder="минимум 6 символов">
+      <div class="field">
+        <label data-i="password_label">Пароль</label>
+        <input type="password" class="finput" id="r-pass" placeholder="••••••">
       </div>
-      <div class="error-msg" id="reg-error"></div>
-      <button class="form-btn" onclick="doRegister()">Создать аккаунт</button>
+      <div class="err" id="r-err"></div>
+      <button class="submit-btn" onclick="doRegister()" data-i="reg_submit">Создать аккаунт</button>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="post-modal">
-  <div class="modal-cloud">
-    <button class="modal-close" onclick="closeModal('post-modal')">×</button>
-    <div class="modal-title">☁ Новый пост</div>
-    <div class="form-group">
-      <label class="form-label">Текст (максимум 50 слов)</label>
-      <textarea class="form-textarea" id="post-content" placeholder="Что у вас на душе?" oninput="updateWordCount()"></textarea>
-      <div class="word-count" id="word-count">0 / 50</div>
+<!-- Post modal -->
+<div class="overlay" id="m-post">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('m-post')">×</button>
+    <div class="modal-title" data-i="new_post_title">☁ Новый пост</div>
+    <div class="field">
+      <label data-i="post_text_label">Текст — максимум 50 слов</label>
+      <textarea class="ftextarea" id="p-content" oninput="updateWC()"></textarea>
+      <div class="wcount" id="wc">0 / 50</div>
     </div>
-    <div class="form-group">
-      <label class="file-input-label" for="post-image">📷 Прикрепить фото (необязательно)</label>
-      <input type="file" id="post-image" accept="image/*" onchange="previewImage()">
-      <img id="img-preview" class="img-preview">
+    <div class="field">
+      <label class="file-label" for="p-img">
+        📷 <span data-i="attach_photo">Прикрепить фото</span>
+      </label>
+      <input type="file" id="p-img" accept="image/*" onchange="previewImg()">
+      <img id="p-prev" class="img-prev">
     </div>
-    <div class="error-msg" id="post-error"></div>
-    <button class="form-btn" onclick="submitPost()" id="post-submit-btn">Опубликовать</button>
+    <div class="err" id="p-err"></div>
+    <button class="submit-btn" onclick="submitPost()" id="p-btn" data-i="publish_btn">Опубликовать</button>
   </div>
 </div>
 
-<div class="modal-overlay" id="edit-profile-modal">
-  <div class="modal-cloud">
-    <button class="modal-close" onclick="closeModal('edit-profile-modal')">×</button>
-    <div class="modal-title">Редактировать профиль</div>
-    <div class="form-group">
-      <label class="form-label">Аватар</label>
-      <label class="file-input-label" for="avatar-input">🌙 Загрузить аватар</label>
-      <input type="file" id="avatar-input" accept="image/*">
+<!-- Edit profile modal -->
+<div class="overlay" id="m-edit">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('m-edit')">×</button>
+    <div class="modal-title" data-i="edit_profile_title">Редактировать профиль</div>
+    <div class="field">
+      <label class="file-label" for="av-inp">
+        🌙 <span data-i="upload_avatar">Загрузить аватар</span>
+      </label>
+      <input type="file" id="av-inp" accept="image/*">
     </div>
-    <div class="form-group">
-      <label class="form-label">О себе (до 200 символов)</label>
-      <textarea class="form-textarea" id="edit-about" placeholder="Расскажи о себе..." style="min-height:80px"></textarea>
+    <div class="field">
+      <label data-i="about_label">О себе</label>
+      <textarea class="ftextarea" id="e-about" style="min-height:72px"></textarea>
     </div>
-    <div class="error-msg" id="edit-profile-error"></div>
-    <button class="form-btn" onclick="saveProfile()">Сохранить</button>
+    <div class="err" id="e-err"></div>
+    <button class="submit-btn" onclick="saveProfile()" data-i="save_btn">Сохранить</button>
   </div>
 </div>
 
-<div class="rain-container" id="rain-container"></div>
+<!-- Rain & Rainbow -->
+<canvas id="rainbow-canvas"></canvas>
+<div id="rain-stage"></div>
 
 <script>
+// ===================== I18N =====================
+const I18N = {
+  ru: {
+    login_btn: 'Войти',
+    tab_login: 'Войти',
+    tab_reg: 'Регистрация',
+    username_label: 'Имя пользователя',
+    password_label: 'Пароль',
+    login_submit: 'Войти',
+    reg_submit: 'Создать аккаунт',
+    new_post_title: '☁ Новый пост',
+    post_text_label: 'Текст — максимум 50 слов',
+    attach_photo: 'Прикрепить фото',
+    publish_btn: 'Опубликовать',
+    edit_profile_title: 'Редактировать профиль',
+    upload_avatar: 'Загрузить аватар',
+    about_label: 'О себе',
+    save_btn: 'Сохранить',
+    loading: 'Загружаем облака...',
+    add_post: '+ Добавить пост',
+    logout: 'Выйти',
+    edit_profile: 'Редактировать профиль',
+    empty: '☁ Облака пока пусты',
+    empty_sub: 'Будь первым!',
+    no_posts: 'Постов ещё нет',
+    just_now: 'только что',
+    min_ago: ' мин назад',
+    hr_ago: ' ч назад',
+    delete_confirm: 'Удалить этот пост?',
+    posts_label: 'Публикации',
+    no_bio: 'Нет информации о себе',
+    login_reg: 'Войти / Регистрация',
+  },
+  en: {
+    login_btn: 'Sign in',
+    tab_login: 'Sign in',
+    tab_reg: 'Register',
+    username_label: 'Username',
+    password_label: 'Password',
+    login_submit: 'Sign in',
+    reg_submit: 'Create account',
+    new_post_title: '☁ New post',
+    post_text_label: 'Text — max 50 words',
+    attach_photo: 'Attach photo',
+    publish_btn: 'Publish',
+    edit_profile_title: 'Edit profile',
+    upload_avatar: 'Upload avatar',
+    about_label: 'About me',
+    save_btn: 'Save',
+    loading: 'Loading clouds...',
+    add_post: '+ Add post',
+    logout: 'Sign out',
+    edit_profile: 'Edit profile',
+    empty: '☁ No clouds yet',
+    empty_sub: 'Be the first!',
+    no_posts: 'No posts yet',
+    just_now: 'just now',
+    min_ago: ' min ago',
+    hr_ago: ' hr ago',
+    delete_confirm: 'Delete this post?',
+    posts_label: 'Posts',
+    no_bio: 'No bio yet',
+    login_reg: 'Sign in / Register',
+  }
+};
+
+let lang = 'ru';
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach((b,i) => {
+    b.className = 'lang-btn' + ((i===0&&l==='ru')||(i===1&&l==='en') ? ' active' : '');
+  });
+  applyLang();
+  updateNav();
+}
+function t(k) { return I18N[lang][k] || k; }
+function applyLang() {
+  document.querySelectorAll('[data-i]').forEach(el => {
+    const k = el.getAttribute('data-i');
+    el.textContent = t(k);
+  });
+}
+
+// ===================== STATE =====================
 let currentUser = null;
 
 async function init() {
@@ -630,338 +883,419 @@ async function init() {
 }
 
 function updateNav() {
-  const nav = document.getElementById('nav-actions');
+  const nr = document.getElementById('nav-right');
   if (currentUser) {
-    nav.innerHTML = `
+    nr.innerHTML = `
       <span class="nav-user" onclick="showProfile('${currentUser.username}')">${currentUser.username}</span>
-      <button class="nav-btn dark" onclick="doLogout()">Выйти</button>
+      <button class="nav-pill dark" onclick="doLogout()">${t('logout')}</button>
     `;
   } else {
-    nav.innerHTML = `<button class="nav-btn" onclick="openAuthModal()">Войти / Регистрация</button>`;
+    nr.innerHTML = `<button class="nav-pill" onclick="openAuthModal()">${t('login_reg')}</button>`;
   }
 }
 
+// ===================== FEED =====================
 async function loadFeed() {
   showPage('feed-page');
-  const container = document.getElementById('posts-container');
-  container.innerHTML = '<div class="loading-cloud">Загружаем облака...</div>';
+  const wrap = document.getElementById('posts-wrap');
+  wrap.innerHTML = `<div class="state-msg">${t('loading')}</div>`;
   const res = await fetch('/api/posts');
   const posts = await res.json();
-  if (posts.length === 0) {
-    container.innerHTML = '<div class="empty-cloud"><p>☁ Облака пока пусты<br><small>Будь первым!</small></p></div>';
+  if (!posts.length) {
+    wrap.innerHTML = `<div class="state-msg">${t('empty')}<br><small style="opacity:.5;font-size:.8em">${t('empty_sub')}</small></div>`;
     return;
   }
-  container.innerHTML = '';
-  posts.forEach((post, i) => container.appendChild(createPostEl(post, i)));
+  wrap.innerHTML = '';
+  posts.forEach((p, i) => {
+    const el = buildPost(p);
+    el.style.animationDelay = `${i * 0.055}s`;
+    wrap.appendChild(el);
+  });
 }
 
-function createPostEl(post, index = 0) {
-  const div = document.createElement('div');
-  div.className = 'cloud-post';
-  div.id = `post-${post.id}`;
-  div.style.animationDelay = `${index * 0.06}s`;
-  const canDelete = currentUser && (currentUser.username === 'siteowner' || currentUser.id === post.user_id);
-  const timeStr = formatTime(post.created_at);
-  const likeActive = post.my_reaction === 'like' ? 'active-like' : '';
-  const dislikeActive = post.my_reaction === 'dislike' ? 'active-dislike' : '';
-  div.innerHTML = `
-    <div class="cloud-post-pair">
-      <div style="flex:1">
-        <div class="cloud-shape">
-          <div class="cloud-extra-bump"></div>
-          <div class="cloud-author" onclick="showProfile('${post.username}')">@${post.username}</div>
-          <div class="cloud-text">${escapeHtml(post.content)}</div>
-          <div class="cloud-reactions">
-            <button class="reaction-btn ${likeActive}" onclick="react(${post.id}, 'like', this)">
-              <span class="reaction-icon">🌈</span>
-              <span class="reaction-count">${post.likes}</span>
-            </button>
-            <button class="reaction-btn ${dislikeActive}" onclick="react(${post.id}, 'dislike', this)">
-              <span class="reaction-icon">🌧</span>
-              <span class="reaction-count">${post.dislikes}</span>
-            </button>
-            <span class="cloud-time">${timeStr}</span>
-            ${canDelete ? `<button class="delete-btn" onclick="deletePost(${post.id})">✕</button>` : ''}
+// ===================== BUILD CLOUD POST =====================
+function buildPost(p, idx=0) {
+  const wrap = document.createElement('div');
+  wrap.className = 'cloud-post';
+  wrap.id = `post-${p.id}`;
+
+  const canDel = currentUser && (currentUser.username === 'siteowner' || currentUser.id === p.user_id);
+  const likeC  = p.my_reaction === 'like'    ? ' liked'    : '';
+  const disC   = p.my_reaction === 'dislike' ? ' disliked' : '';
+
+  const cloudHtml = `
+    <div class="cloud-svg-wrap">
+      ${chalkCloudSVG()}
+      <div class="cloud-body">
+        <div class="cloud-author" onclick="showProfile('${p.username}')">@${p.username}</div>
+        <div class="cloud-text">${esc(p.content)}</div>
+        <div class="chalk-lines">
+          <div class="chalk-line"></div>
+          <div class="chalk-line"></div>
+          <div class="chalk-line"></div>
+        </div>
+        <div class="cloud-reactions">
+          <button class="rxn-btn${likeC}" onclick="react(${p.id},'like',this)">
+            <span class="rxn-icon">🌈</span>
+            <span class="rxn-n">${p.likes}</span>
+          </button>
+          <button class="rxn-btn${disC}" onclick="react(${p.id},'dislike',this)">
+            <span class="rxn-icon">🌧</span>
+            <span class="rxn-n">${p.dislikes}</span>
+          </button>
+          <div class="cloud-meta">
+            <span class="cloud-time">${fmtTime(p.created_at)}</span>
+            ${canDel ? `<button class="del-btn" onclick="delPost(${p.id})">✕</button>` : ''}
           </div>
         </div>
       </div>
-      ${post.image_url ? `
-        <div class="cloud-photo">
-          <div class="cloud-photo-shape">
-            <img src="${post.image_url}" class="cloud-photo-img" alt="photo">
-            <div class="photo-circle">Photo</div>
-          </div>
-        </div>` : ''}
     </div>`;
-  return div;
+
+  if (p.image_url) {
+    wrap.innerHTML = `
+      <div class="post-with-photo">
+        ${cloudHtml}
+        <div class="photo-cloud">
+          <div class="photo-cloud-inner">
+            <img src="${p.image_url}" class="photo-img" alt="">
+            <div class="photo-badge">Photo</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    wrap.innerHTML = cloudHtml;
+  }
+  return wrap;
 }
 
+function chalkCloudSVG() {
+  // Randomize slightly for organic feel
+  const r = () => (Math.random() * 4 - 2).toFixed(1);
+  return `<svg class="cloud-bg" viewBox="0 0 440 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <filter id="chalk" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <g filter="url(#chalk)">
+      <ellipse cx="80" cy="80" rx="75" ry="55" fill="#F5F4EF"/>
+      <ellipse cx="155" cy="60" rx="60" ry="48" fill="#F5F4EF"/>
+      <ellipse cx="230" cy="55" rx="70" ry="52" fill="#F5F4EF"/>
+      <ellipse cx="310" cy="62" rx="65" ry="50" fill="#F5F4EF"/>
+      <ellipse cx="380" cy="78" rx="68" ry="54" fill="#F5F4EF"/>
+      <ellipse cx="110" cy="45" rx="45" ry="38" fill="#F5F4EF"/>
+      <ellipse cx="190" cy="38" rx="50" ry="40" fill="#F5F4EF"/>
+      <ellipse cx="270" cy="36" rx="48" ry="38" fill="#F5F4EF"/>
+      <ellipse cx="350" cy="44" rx="44" ry="36" fill="#F5F4EF"/>
+    </g>
+  </svg>`;
+}
+
+// ===================== REACT =====================
 async function react(postId, type, btn) {
   if (!currentUser) { openAuthModal(); return; }
   const postEl = document.getElementById(`post-${postId}`);
-  const allBtns = postEl.querySelectorAll('.reaction-btn');
+  const btns = postEl.querySelectorAll('.rxn-btn');
   const res = await fetch(`/api/posts/${postId}/react`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type })
   });
-  const data = await res.json();
-  allBtns[0].querySelector('.reaction-count').textContent = data.likes;
-  allBtns[1].querySelector('.reaction-count').textContent = data.dislikes;
-  allBtns[0].className = 'reaction-btn' + (data.my_reaction === 'like' ? ' active-like' : '');
-  allBtns[1].className = 'reaction-btn' + (data.my_reaction === 'dislike' ? ' active-dislike' : '');
-  if (type === 'like' && data.my_reaction === 'like') triggerRainbow(postEl);
-  else if (type === 'dislike' && data.my_reaction === 'dislike') triggerRain(postEl);
+  const d = await res.json();
+  btns[0].querySelector('.rxn-n').textContent = d.likes;
+  btns[1].querySelector('.rxn-n').textContent = d.dislikes;
+  btns[0].className = 'rxn-btn' + (d.my_reaction === 'like'    ? ' liked'    : '');
+  btns[1].className = 'rxn-btn' + (d.my_reaction === 'dislike' ? ' disliked' : '');
+  if (type === 'like'    && d.my_reaction === 'like')    triggerRainbow(postEl);
+  if (type === 'dislike' && d.my_reaction === 'dislike') triggerRain(postEl);
 }
 
-function triggerRainbow(sourceEl) {
-  const rect = sourceEl.getBoundingClientRect();
-  const startX = rect.left + rect.width / 2;
-  const startY = rect.top + rect.height / 2;
-  const colors = ['#ff6b6b','#ff9f43','#ffd93d','#6bcb77','#4d96ff','#c77dff'];
-  const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:999;';
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  const duration = 1500;
-  const start = performance.now();
-  function draw(t) {
-    const elapsed = t - start;
-    const progress = Math.min(elapsed / duration, 1);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const eased = progress < 0.5 ? 2*progress*progress : -1+(4-2*progress)*progress;
-    colors.forEach((color, i) => {
-      const alpha = Math.sin(progress * Math.PI) * 0.8;
+// ===================== RAINBOW =====================
+function triggerRainbow(srcEl) {
+  const rc = document.getElementById('rainbow-canvas');
+  rc.style.display = 'block';
+  rc.width  = window.innerWidth;
+  rc.height = window.innerHeight;
+  const ctx = rc.getContext('2d');
+  const rect = srcEl.getBoundingClientRect();
+  const ox = rect.left + rect.width  * 0.5;
+  const oy = rect.top  + rect.height * 0.5;
+  // Target: top-right corner area
+  const tx = window.innerWidth  * 0.92;
+  const ty = window.innerHeight * 0.05;
+
+  const COLORS = [
+    'rgba(255,50,80,',
+    'rgba(255,140,0,',
+    'rgba(255,220,0,',
+    'rgba(80,210,80,',
+    'rgba(40,140,255,',
+    'rgba(160,80,255,',
+  ];
+  const W = [14, 12, 11, 10, 9, 8];
+
+  const dur = 1800;
+  const t0  = performance.now();
+
+  function frame(now) {
+    const prog = Math.min((now - t0) / dur, 1);
+    ctx.clearRect(0, 0, rc.width, rc.height);
+
+    // Ease in-out
+    const e = prog < 0.5 ? 2*prog*prog : -1+(4-2*prog)*prog;
+    // Arc control point (up and to the right)
+    const cx1 = ox + (tx - ox) * 0.25;
+    const cy1 = oy - 320 * Math.sin(prog * Math.PI);
+    const cx2 = ox + (tx - ox) * 0.75;
+    const cy2 = ty - 100 * Math.sin(prog * Math.PI);
+    // End point moves along path
+    const ex = ox + (tx - ox) * e;
+    const ey = oy + (ty - oy) * e - 180 * Math.sin(prog * Math.PI * 0.9);
+
+    const alpha = Math.sin(prog * Math.PI) * 0.9;
+
+    COLORS.forEach((col, i) => {
       ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      const cx = startX + (window.innerWidth - startX) * 0.3;
-      const cy = startY - 200 * eased;
-      ctx.quadraticCurveTo(cx, cy, startX + (window.innerWidth - startX) * eased, startY + (0 - startY) * eased);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 8 - i * 0.5;
-      ctx.globalAlpha = alpha;
-      ctx.lineCap = 'round';
+      ctx.moveTo(ox, oy);
+      ctx.bezierCurveTo(cx1, cy1 - i*6, cx2, cy2 - i*4, ex, ey);
+      ctx.strokeStyle = col + alpha + ')';
+      ctx.lineWidth   = W[i];
+      ctx.lineCap     = 'round';
+      ctx.lineJoin    = 'round';
       ctx.stroke();
     });
-    ctx.globalAlpha = 1;
-    if (progress < 1) requestAnimationFrame(draw);
-    else canvas.remove();
+
+    if (prog < 1) requestAnimationFrame(frame);
+    else { ctx.clearRect(0,0,rc.width,rc.height); rc.style.display = 'none'; }
   }
-  requestAnimationFrame(draw);
+  requestAnimationFrame(frame);
 }
 
-function triggerRain(sourceEl) {
-  const rect = sourceEl.getBoundingClientRect();
-  const container = document.getElementById('rain-container');
-  container.style.display = 'block';
-  container.style.left = rect.left + 'px';
-  container.style.top = rect.bottom + 'px';
-  container.style.width = rect.width + 'px';
-  container.style.height = '120px';
-  container.innerHTML = '';
-  for (let i = 0; i < 30; i++) {
-    const drop = document.createElement('div');
-    drop.className = 'raindrop';
-    drop.style.left = Math.random() * 100 + '%';
-    drop.style.height = (10 + Math.random() * 20) + 'px';
-    drop.style.animationDuration = (0.4 + Math.random() * 0.4) + 's';
-    drop.style.animationDelay = (Math.random() * 0.6) + 's';
-    container.appendChild(drop);
+// ===================== RAIN =====================
+function triggerRain(srcEl) {
+  const stage = document.getElementById('rain-stage');
+  const rect  = srcEl.getBoundingClientRect();
+  stage.style.cssText = `
+    display:block;
+    left:${rect.left}px; top:${rect.top}px;
+    width:${rect.width}px; height:${rect.height + 180}px;
+  `;
+  stage.innerHTML = '';
+
+  for (let i = 0; i < 55; i++) {
+    const d = document.createElement('div');
+    d.className = 'drop';
+    const h = 12 + Math.random() * 22;
+    d.style.cssText = `
+      left:${Math.random()*100}%;
+      height:${h}px;
+      animation-duration:${0.35 + Math.random()*0.45}s;
+      animation-delay:${Math.random()*0.9}s;
+      opacity:${0.5 + Math.random()*0.5};
+    `;
+    stage.appendChild(d);
   }
-  setTimeout(() => { container.style.display = 'none'; container.innerHTML = ''; }, 1800);
+  setTimeout(() => { stage.style.display = 'none'; stage.innerHTML = ''; }, 2200);
 }
 
+// ===================== POST =====================
 function openPostModal() {
   if (!currentUser) { openAuthModal(); return; }
-  document.getElementById('post-content').value = '';
-  document.getElementById('post-image').value = '';
-  document.getElementById('img-preview').style.display = 'none';
-  document.getElementById('post-error').className = 'error-msg';
-  document.getElementById('word-count').textContent = '0 / 50';
-  openModal('post-modal');
+  document.getElementById('p-content').value = '';
+  document.getElementById('p-img').value = '';
+  document.getElementById('p-prev').style.display = 'none';
+  document.getElementById('p-err').className = 'err';
+  document.getElementById('wc').textContent = '0 / 50';
+  openModal('m-post');
 }
 
-function updateWordCount() {
-  const text = document.getElementById('post-content').value.trim();
-  const words = text ? text.split(/\s+/).length : 0;
-  const counter = document.getElementById('word-count');
-  counter.textContent = `${words} / 50`;
-  counter.className = words > 50 ? 'word-count over' : 'word-count';
+function updateWC() {
+  const txt = document.getElementById('p-content').value.trim();
+  const w   = txt ? txt.split(/\s+/).length : 0;
+  const el  = document.getElementById('wc');
+  el.textContent = `${w} / 50`;
+  el.className   = w > 50 ? 'wcount over' : 'wcount';
 }
 
-function previewImage() {
-  const file = document.getElementById('post-image').files[0];
-  const preview = document.getElementById('img-preview');
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
-    reader.readAsDataURL(file);
-  } else {
-    preview.style.display = 'none';
-  }
+function previewImg() {
+  const f = document.getElementById('p-img').files[0];
+  const p = document.getElementById('p-prev');
+  if (f) {
+    const r = new FileReader();
+    r.onload = e => { p.src = e.target.result; p.style.display = 'block'; };
+    r.readAsDataURL(f);
+  } else p.style.display = 'none';
 }
 
 async function submitPost() {
-  const content = document.getElementById('post-content').value.trim();
-  const imageFile = document.getElementById('post-image').files[0];
-  const errEl = document.getElementById('post-error');
-  const btn = document.getElementById('post-submit-btn');
-  if (!content) { showError(errEl, 'Напишите что-нибудь!'); return; }
-  if (content.split(/\s+/).length > 50) { showError(errEl, 'Максимум 50 слов!'); return; }
-  btn.disabled = true; btn.textContent = 'Публикуем...';
-  const formData = new FormData();
-  formData.append('content', content);
-  if (imageFile) formData.append('image', imageFile);
+  const content = document.getElementById('p-content').value.trim();
+  const imgFile = document.getElementById('p-img').files[0];
+  const errEl   = document.getElementById('p-err');
+  const btn     = document.getElementById('p-btn');
+  if (!content) { showErr(errEl, '!'); return; }
+  if (content.split(/\s+/).length > 50) { showErr(errEl, '50 ' + (lang==='ru'?'слов макс':'words max')); return; }
+
+  btn.disabled = true;
+  btn.textContent = lang === 'ru' ? 'Публикуем...' : 'Publishing...';
+
+  const fd = new FormData();
+  fd.append('content', content);
+  if (imgFile) fd.append('image', imgFile);
+
   try {
-    const res = await fetch('/api/posts', { method: 'POST', body: formData });
+    const res  = await fetch('/api/posts', { method: 'POST', body: fd });
     const data = await res.json();
-    if (!res.ok) { showError(errEl, data.error); btn.disabled = false; btn.textContent = 'Опубликовать'; return; }
-    closeModal('post-modal');
-    const container = document.getElementById('posts-container');
-    const loadingEl = container.querySelector('.loading-cloud, .empty-cloud');
-    if (loadingEl) loadingEl.remove();
-    const postEl = createPostEl(data, 0);
-    postEl.style.animationDelay = '0s';
-    container.insertBefore(postEl, container.firstChild);
-  } catch (e) { showError(errEl, 'Ошибка сервера'); }
-  btn.disabled = false; btn.textContent = 'Опубликовать';
+    if (!res.ok) { showErr(errEl, data.error); btn.disabled = false; btn.textContent = t('publish_btn'); return; }
+    closeModal('m-post');
+    const wrap = document.getElementById('posts-wrap');
+    const old  = wrap.querySelector('.state-msg');
+    if (old) old.remove();
+    const el = buildPost(data);
+    el.style.animationDelay = '0s';
+    wrap.insertBefore(el, wrap.firstChild);
+  } catch { showErr(errEl, 'Error'); }
+  btn.disabled = false;
+  btn.textContent = t('publish_btn');
 }
 
-async function deletePost(id) {
-  if (!confirm('Удалить этот пост?')) return;
+async function delPost(id) {
+  if (!confirm(t('delete_confirm'))) return;
   const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
   if (res.ok) document.getElementById(`post-${id}`)?.remove();
 }
 
+// ===================== PROFILE =====================
 async function showProfile(username) {
   showPage('profile-page');
-  const content = document.getElementById('profile-content');
-  content.innerHTML = '<div class="loading-cloud" style="color:rgba(255,255,255,0.5)">Загружаем профиль...</div>';
-  const res = await fetch(`/api/profile/${username}`);
+  const c = document.getElementById('profile-content');
+  c.innerHTML = `<div class="profile-sky"><div class="state-msg" style="color:rgba(255,255,255,0.4)">${t('loading')}</div></div>`;
+
+  const res  = await fetch(`/api/profile/${username}`);
   const data = await res.json();
-  if (!res.ok) { content.innerHTML = '<div class="loading-cloud" style="color:rgba(255,255,255,0.5)">Профиль не найден</div>'; return; }
+  if (!res.ok) return;
+
   const { user, posts } = data;
   const isMe = currentUser && currentUser.id === user.id;
-  content.innerHTML = `
-    <div class="profile-header">
-      <div class="profile-moon">
-        ${user.avatar_url ? `<img src="${user.avatar_url}" alt="avatar">` : `<div class="profile-moon-placeholder">☽</div>`}
+
+  c.innerHTML = `
+    <div class="profile-sky">
+      <div class="profile-moon-wrap" ${isMe ? 'title="Change avatar"' : ''}>
+        ${user.avatar_url
+          ? `<img src="${user.avatar_url}" alt="">`
+          : `<div class="moon-placeholder">☽</div>`}
       </div>
-      <div class="profile-name">${escapeHtml(user.username)}</div>
-      <div class="profile-about">${user.about ? escapeHtml(user.about) : 'Нет информации о себе'}</div>
-      ${isMe ? `<button class="profile-edit-btn" onclick="openEditProfile()">Редактировать профиль</button>` : ''}
+      <div class="profile-name">${esc(user.username)}</div>
+      <div class="profile-about">${user.about ? esc(user.about) : `<em>${t('no_bio')}</em>`}</div>
+      ${isMe ? `<button class="profile-edit-btn" onclick="openEditProfile()">${t('edit_profile')}</button>` : ''}
     </div>
-    <div class="profile-posts">
-      ${posts.length === 0
-        ? `<div class="empty-cloud"><p>Постов ещё нет</p></div>`
-        : posts.map(p => `
-          <div class="profile-cloud">
-            <div class="profile-cloud-text">${escapeHtml(p.content)}</div>
-            ${p.image_url ? `<img src="${p.image_url}" style="max-width:100%;border-radius:16px;margin-top:10px;">` : ''}
-            <div class="profile-cloud-time">${formatTime(p.created_at)} · 🌈${p.likes} 🌧${p.dislikes}</div>
-          </div>`).join('')}
+    <div class="profile-posts-section">
+      <div class="profile-posts-inner">
+        <div class="section-label">${t('posts_label')}</div>
+        ${posts.length === 0
+          ? `<div style="color:rgba(255,255,255,0.25);font-family:'Unbounded',sans-serif;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em">${t('no_posts')}</div>`
+          : posts.map(p => `
+            <div class="profile-post-card">
+              <div class="profile-post-text">${esc(p.content)}</div>
+              ${p.image_url ? `<img src="${p.image_url}" style="max-width:100%;border-radius:14px;margin-top:10px">` : ''}
+              <div class="profile-post-meta">${fmtTime(p.created_at)} · 🌈${p.likes} 🌧${p.dislikes}</div>
+            </div>`).join('')}
+      </div>
     </div>`;
 }
 
 function openEditProfile() {
-  document.getElementById('edit-about').value = currentUser.about || '';
-  openModal('edit-profile-modal');
+  document.getElementById('e-about').value = currentUser.about || '';
+  openModal('m-edit');
 }
 
 async function saveProfile() {
-  const about = document.getElementById('edit-about').value;
-  const avatarFile = document.getElementById('avatar-input').files[0];
-  const errEl = document.getElementById('edit-profile-error');
-  const formData = new FormData();
-  formData.append('about', about);
-  if (avatarFile) formData.append('avatar', avatarFile);
-  const res = await fetch('/api/profile', { method: 'PUT', body: formData });
+  const about   = document.getElementById('e-about').value;
+  const avFile  = document.getElementById('av-inp').files[0];
+  const errEl   = document.getElementById('e-err');
+  const fd = new FormData();
+  fd.append('about', about);
+  if (avFile) fd.append('avatar', avFile);
+  const res  = await fetch('/api/profile', { method: 'PUT', body: fd });
   const data = await res.json();
-  if (!res.ok) { showError(errEl, data.error); return; }
+  if (!res.ok) { showErr(errEl, data.error); return; }
   currentUser = { ...currentUser, ...data };
-  closeModal('edit-profile-modal');
+  closeModal('m-edit');
   showProfile(currentUser.username);
 }
 
-function openAuthModal() { openModal('auth-modal'); }
+// ===================== AUTH =====================
+function openAuthModal() { openModal('m-auth'); }
 
 function switchTab(tab) {
-  document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-  document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
-  document.querySelectorAll('.modal-tab').forEach((t, i) => {
-    t.className = 'modal-tab' + ((i === 0 && tab === 'login') || (i === 1 && tab === 'register') ? ' active' : '');
+  document.getElementById('f-login').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('f-reg').style.display   = tab==='register' ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.className = 'tab' + ((i===0&&tab==='login')||(i===1&&tab==='register') ? ' active' : '');
   });
 }
 
 async function doLogin() {
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value;
-  const errEl = document.getElementById('login-error');
-  const res = await fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
-  });
+  const username = document.getElementById('l-user').value.trim();
+  const password = document.getElementById('l-pass').value;
+  const errEl    = document.getElementById('l-err');
+  const res  = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) });
   const data = await res.json();
-  if (!res.ok) { showError(errEl, data.error); return; }
-  const meRes = await fetch('/api/me');
-  currentUser = (await meRes.json()).user;
-  closeModal('auth-modal');
+  if (!res.ok) { showErr(errEl, data.error); return; }
+  const me = await (await fetch('/api/me')).json();
+  currentUser = me.user;
+  closeModal('m-auth');
   updateNav();
   loadFeed();
 }
 
 async function doRegister() {
-  const username = document.getElementById('reg-username').value.trim();
-  const password = document.getElementById('reg-password').value;
-  const errEl = document.getElementById('reg-error');
-  const res = await fetch('/api/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
-  });
+  const username = document.getElementById('r-user').value.trim();
+  const password = document.getElementById('r-pass').value;
+  const errEl    = document.getElementById('r-err');
+  const res  = await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) });
   const data = await res.json();
-  if (!res.ok) { showError(errEl, data.error); return; }
-  const meRes = await fetch('/api/me');
-  currentUser = (await meRes.json()).user;
-  closeModal('auth-modal');
+  if (!res.ok) { showErr(errEl, data.error); return; }
+  const me = await (await fetch('/api/me')).json();
+  currentUser = me.user;
+  closeModal('m-auth');
   updateNav();
   loadFeed();
 }
 
 async function doLogout() {
-  await fetch('/api/logout', { method: 'POST' });
+  await fetch('/api/logout', { method:'POST' });
   currentUser = null;
   updateNav();
   loadFeed();
 }
 
+// ===================== UTILS =====================
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
 }
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showError(el, msg) { el.textContent = msg; el.className = 'error-msg show'; }
-function escapeHtml(text) {
-  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function showErr(el, msg) { el.textContent = msg; el.className = 'err show'; }
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function formatTime(dateStr) {
-  const d = new Date(dateStr);
-  const diff = (new Date() - d) / 1000;
-  if (diff < 60) return 'только что';
-  if (diff < 3600) return Math.floor(diff / 60) + ' мин назад';
-  if (diff < 86400) return Math.floor(diff / 3600) + ' ч назад';
-  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+function fmtTime(ds) {
+  const d    = new Date(ds);
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60)   return t('just_now');
+  if (diff < 3600) return Math.floor(diff/60)   + t('min_ago');
+  if (diff < 86400)return Math.floor(diff/3600) + t('hr_ago');
+  return d.toLocaleDateString(lang==='ru'?'ru-RU':'en-US', {day:'numeric', month:'short'});
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+// Close on overlay click
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
 });
-document.getElementById('login-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-document.getElementById('reg-password').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister(); });
+
+document.getElementById('l-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('r-pass').addEventListener('keydown', e => { if(e.key==='Enter') doRegister(); });
 
 init();
 </script>
